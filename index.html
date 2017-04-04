@@ -1,0 +1,48 @@
+<!doctype html>
+<html>
+  <head>
+    <link rel='stylesheet' type='text/css' href='css/styles.css' />
+  </head>
+  <body>
+    <div id='page'>
+      <p id='loading'>Loading...</p>
+      <textarea id='text'>
+      </textarea>
+    </div>
+  </body>
+  <script type='application/javascript'>
+    class VoiceApp {
+      constructor() {
+        this.voice = null;
+        speechSynthesis.onvoiceschanged = this.initializeVoice;
+      }
+
+      initializeVoice() {
+        let voices = speechSynthesis.getVoices();
+        let voice = voices.find((v) => v.voiceURI == 'Google UK English Female')
+
+        if (voice) {
+          this.voice = voice;
+          document.getElementById('loading').setAttribute('style', 'display: none;');
+        }
+      }
+
+      speak(message) {
+        var utterance = new SpeechSynthesisUtterance(message);
+        utterance.voice = this.voice;
+        speechSynthesis.speak(utterance);
+      }
+    }
+
+    let app = new VoiceApp();
+    document.getElementById('text').addEventListener('keypress', function(e) {
+      let key = e.key.toLowerCase();
+
+      if (key === ' ') {
+        app.speak(e.target.value);
+      } else {
+        app.speak(key);
+      }
+    });
+  </script>
+</html>
